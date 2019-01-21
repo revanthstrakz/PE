@@ -480,7 +480,7 @@ static void configure_bark_dump(struct msm_watchdog_data *wdog_dd)
 			 * without saving registers.
 			 */
 		}
-	} else {
+	} else if (IS_ENABLED(CONFIG_MSM_MEMORY_DUMP_V2)) {
 		cpu_data = kzalloc(sizeof(struct msm_dump_data) *
 				   num_present_cpus(), GFP_KERNEL);
 		if (!cpu_data) {
@@ -572,7 +572,7 @@ static void init_watchdog_data(struct msm_watchdog_data *wdog_dd)
 	mutex_init(&wdog_dd->disable_lock);
 	init_completion(&wdog_dd->pet_complete);
 	wake_up_process(wdog_dd->watchdog_task);
-	init_timer(&wdog_dd->pet_timer);
+	init_timer_deferrable(&wdog_dd->pet_timer);
 	wdog_dd->pet_timer.data = (unsigned long)wdog_dd;
 	wdog_dd->pet_timer.function = pet_task_wakeup;
 	wdog_dd->pet_timer.expires = jiffies + delay_time;
